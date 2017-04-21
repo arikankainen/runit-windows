@@ -15,6 +15,7 @@ namespace RunIt
     public partial class Form1
     {
         private Color setColorBackground;
+        private Color setColorBackgroundWarning = ColorTranslator.FromHtml("#cc0000");
         private Color setColorGroupBackground;
         private Color setColorShortcutBackground;
         private Color setColorShortcutBackgroundHover;

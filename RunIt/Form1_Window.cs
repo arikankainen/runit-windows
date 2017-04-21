@@ -15,40 +15,38 @@ namespace RunIt
         private bool fadeInProgress = false;
         private bool disableFade = true;
         private bool windowDragged = false;
+        private bool widthWarning = false;
+        private bool widthWarningOk = false;
 
         public void ShowWindow()
         {
             bool alreadyOpen = this.Visible;
 
-            //if (shortcutsFound)
-            //{
-                if (!alreadyOpen)
-                {
-                    resizeWindow();
+            if (!alreadyOpen)
+            {
+                resizeWindow();
 
-                    this.TopMost = false;
-                    this.WindowState = FormWindowState.Minimized;
-                    this.Opacity = 0;
-                    this.Show();
-                    this.WindowState = FormWindowState.Normal;
+                this.TopMost = false;
+                this.WindowState = FormWindowState.Minimized;
+                this.Opacity = 0;
+                this.Show();
+                this.WindowState = FormWindowState.Normal;
 
-                    if (setFade && !disableFade) fadeIn();
-                    else this.Show();
-                }
+                if (setFade && !disableFade) fadeIn();
+                else this.Show();
+            }
 
-                this.Opacity = setOpacity;
-                this.BringToFront();
-                this.Focus();
-                this.Activate();
-                this.TopMost = true;
-            //}
+            this.Opacity = setOpacity;
+            this.BringToFront();
+            this.Focus();
+            this.Activate();
+            this.TopMost = true;
         }
 
         public void HideWindow()
         {
             if (setFade && !disableFade && this.Visible) fadeOut();
             else this.Hide();
-            //this.Hide();
             windowDragged = false;
         }
 
@@ -326,20 +324,65 @@ namespace RunIt
             int maxWidth = screen.WorkingArea.Width - (setLocationMargin * 2);
             int maxHeight = screen.WorkingArea.Height - (setLocationMargin * 2);
 
+            bool widthWarningTemp = false;
+
             foreach (Control c1 in flowLayoutPanel1.Controls)
             {
                 if (c1 is FlowLayoutPanel && c1.Name == "Group")
                 {
                     foldersFound = true;
                     if (c1.Bottom > bottom && c1.Bottom <= maxHeight && c1.Right <= maxWidth) bottom = c1.Bottom;
-                    if (c1.Right > right && c1.Right <= maxWidth) right = c1.Right;
+
+
+                    if (c1.Right > right && c1.Right <= maxWidth)
+                    {
+                        right = c1.Right;
+                    }
+
+                    else if (c1.Right > maxWidth)
+                    {
+                        widthWarningTemp = true;
+                    }
                 }
             }
 
+            if (widthWarningTemp)
+            {
+                if (!widthWarning) widthWarningOk = false;
+                widthWarning = true;
+            }
+
+            else
+            {
+                widthWarning = false;
+                widthWarningOk = false;
+            }
+            
             if (foldersFound)
             {
                 this.Height = bottom + (paddingResizeForm * 2) + setOuterMargin + setGroupMargin;
                 this.Width = right + (paddingResizeForm * 2) + setOuterMargin + setGroupMargin;
+
+                if (widthWarning) this.BackColor = setColorBackgroundWarning;
+                else this.BackColor = setColorBackground;
+
+                if (widthWarning && !widthWarningOk)
+                {
+                    bool wasOpen = settingsOpen;
+                    widthWarningOk = true;
+                    settingsOpen = true;
+
+                    MessageBox.Show(
+                        "There are some groups that does not fit to screen, and for that reason window background was changed to red." + Environment.NewLine + Environment.NewLine +
+                        "You may try to:" + Environment.NewLine + Environment.NewLine +
+                        " - Increase window height" + Environment.NewLine +
+                        " - Decrease element sizes via Settings" + Environment.NewLine +
+                        " - Delete some groups"
+                        , "RunIt");
+
+                    settingsOpen = wasOpen;
+                }
+
             }
 
             else
