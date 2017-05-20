@@ -114,6 +114,7 @@ namespace RunIt
             WshShell shell = new WshShell();
             IWshShortcut shortcut = (IWshShortcut)shell.CreateShortcut(Path.Combine(folder, name + ".lnk"));
             shortcut.TargetPath = exe;
+            shortcut.WorkingDirectory = Path.GetDirectoryName(exe);
             shortcut.Save();
         }
 

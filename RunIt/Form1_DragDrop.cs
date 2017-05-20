@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
@@ -25,6 +26,83 @@ namespace RunIt
         private int mouseDownY = 0;
         private int mouseDownDist = 10;
 
+        // ********************* ADD SHORTCUT ***************************
+
+        private void addShortcut(string fileSource, string destGroup)
+        {
+            string sourcePathAndFilename = fileSource;
+            string sourcePath = Path.GetDirectoryName(fileSource);
+            string sourceFileName = Path.GetFileName(fileSource);
+            string sourceFileNameOnly = Path.GetFileNameWithoutExtension(fileSource);
+            string sourceFileExt = Path.GetExtension(sourceFileName);
+
+            string destPathName = Path.Combine(setFolder, destGroup);
+            string destPathAndFileName = Path.Combine(destPathName, sourceFileNameOnly + ".lnk");
+
+            if (sourceFileExt == ".lnk")
+            {
+                File.Copy(fileSource, getUniqueName(destPathAndFileName));
+            }
+
+            else if (sourceFileExt == ".exe")
+            {
+                string newFileNameOnly = sourceFileNameOnly;
+
+                var versionInfo = FileVersionInfo.GetVersionInfo(sourcePathAndFilename);
+                string versionDesc = versionInfo.FileDescription;
+                if (versionDesc != null & versionDesc != "") newFileNameOnly = removeIllegalChars(versionDesc);
+
+                string tempPathAndFilename = Path.Combine(destPathName, newFileNameOnly + ".lnk");
+                newFileNameOnly = Path.GetFileNameWithoutExtension(getUniqueName(tempPathAndFilename));
+
+                saveShortcut(destPathName, newFileNameOnly, sourcePathAndFilename);
+            }
+
+            else
+            {
+                string newFileNameOnly = Path.GetFileNameWithoutExtension(getUniqueName(destPathAndFileName));
+
+                saveShortcut(destPathName, newFileNameOnly, sourcePathAndFilename);
+            }
+        }
+
+        private string getUniqueName(string name)
+        {
+            string file = Path.Combine(Path.GetDirectoryName(name), Path.GetFileNameWithoutExtension(name));
+
+            DirectoryInfo root = new DirectoryInfo(Path.GetDirectoryName(file));
+            FileInfo[] listfiles = root.GetFiles(Path.GetFileName(file) + ".*");
+
+            if (listfiles.Length > 0)
+            {
+                for (int i = 1; i < 9999; i++)
+                {
+                    string fileTemp = file + " (" + i.ToString() + ")";
+                    DirectoryInfo root2 = new DirectoryInfo(Path.GetDirectoryName(fileTemp));
+                    FileInfo[] listfiles2 = root.GetFiles(Path.GetFileName(fileTemp) + ".*");
+
+                    if (listfiles2.Length == 0)
+                    {
+                        return fileTemp + ".lnk";
+                    }
+                }
+            }
+
+            return file + ".lnk";
+        }
+
+        private string removeIllegalChars(string file)
+        {
+            string invalidChars = new string(Path.GetInvalidFileNameChars()) + new string(Path.GetInvalidPathChars());
+
+            foreach (char c in invalidChars)
+            {
+                file = file.Replace(c.ToString(), "");
+            }
+
+            return file;
+        }
+
         // ********************* MOVE ***************************
 
         private void moveGroup(FlowLayoutPanel sourceGroup, FlowLayoutPanel destGroup)
@@ -38,19 +116,6 @@ namespace RunIt
 
             resizeGroups();
             resizeWindow();
-        }
-
-        private void addShortcut(string fileSource, string destGroup)
-        {
-            string fileName = Path.GetFileName(fileSource);
-            string fileExt = Path.GetExtension(fileName);
-            string pathName = Path.Combine(setFolder, destGroup);
-            string fileDest = Path.Combine(pathName, fileName);
-
-            if (!File.Exists(fileDest) && fileExt == ".lnk")
-            {
-                File.Copy(fileSource, fileDest);
-            }
         }
 
         private void moveShortcut(Panel sourceShortcut, Panel destShortcut, FlowLayoutPanel sourceGroup, FlowLayoutPanel destGroup)

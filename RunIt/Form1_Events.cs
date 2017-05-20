@@ -220,6 +220,26 @@ namespace RunIt
             int lnkFound = 0;
             if (Clipboard.ContainsFileDropList())
             {
+                System.Collections.Specialized.StringCollection list = Clipboard.GetFileDropList();
+                lnkFound = list.Count;
+            }
+
+            if (lnkFound > 0) menuPaste.Enabled = true;
+            else menuPaste.Enabled = false;
+
+            if (lnkFound <= 1) menuPaste.Text = "Paste shortcut";
+            else menuPaste.Text = "Paste " + lnkFound + " shortcuts";
+
+            clickedLabel = (Label)sender;
+            menuGroupDelete.Tag = menuGroupRename.Tag = menuPaste.Tag = clickedLabel.Text;
+
+            Point screenPoint = Cursor.Position;
+            if (e.Button == MouseButtons.Right) contextGroup.Show(this, this.PointToClient(screenPoint));
+
+            /*
+            int lnkFound = 0;
+            if (Clipboard.ContainsFileDropList())
+            {
                 System.Collections.Specialized.StringCollection list;
                 list = Clipboard.GetFileDropList();
 
@@ -240,6 +260,7 @@ namespace RunIt
 
             Point screenPoint = Cursor.Position;
             if (e.Button == MouseButtons.Right) contextGroup.Show(this, this.PointToClient(screenPoint));
+            */
         }
 
         private void flow_MouseUp(object sender, MouseEventArgs e)
@@ -265,6 +286,7 @@ namespace RunIt
             string name = Path.GetFileNameWithoutExtension(file);
 
             settingsOpen = true;
+            windowDragged = true;
 
             FormRename form = new FormRename();
             form.Topic = "Rename shortcut";
@@ -321,6 +343,7 @@ namespace RunIt
         private void menuShortcutDelete_Click(object sender, EventArgs e)
         {
             settingsOpen = true;
+            windowDragged = true;
 
             string file = menuShortcutDelete.Tag.ToString();
             string name = Path.GetFileNameWithoutExtension(file);
@@ -340,6 +363,7 @@ namespace RunIt
         private void menuGroupNew_Click(object sender, EventArgs e)
         {
             settingsOpen = true;
+            windowDragged = true;
 
             FormRename form = new FormRename();
             form.Topic = "Add new group";
@@ -377,6 +401,7 @@ namespace RunIt
             string group = menuGroupRename.Tag.ToString();
 
             settingsOpen = true;
+            windowDragged = true;
 
             FormRename form = new FormRename();
             form.Topic = "Rename group";
@@ -414,6 +439,7 @@ namespace RunIt
         private void menuGroupDelete_Click(object sender, EventArgs e)
         {
             settingsOpen = true;
+            windowDragged = true;
 
             string group = menuGroupDelete.Tag.ToString();
             string dir = Path.Combine(setFolder, group);
@@ -434,6 +460,20 @@ namespace RunIt
         {
             if (Clipboard.ContainsFileDropList())
             {
+                System.Collections.Specialized.StringCollection list = Clipboard.GetFileDropList();
+
+                foreach (string file in list)
+                {
+                    addShortcut(file, menuPaste.Tag.ToString());
+                }
+
+                Clipboard.Clear();
+                ReloadSettings(true);
+            }
+
+            /*
+            if (Clipboard.ContainsFileDropList())
+            {
                 System.Collections.Specialized.StringCollection list;
                 list = Clipboard.GetFileDropList();
 
@@ -445,6 +485,7 @@ namespace RunIt
                 Clipboard.Clear();
                 ReloadSettings(true);
             }
+            */
         }
 
         private void menuSavePosition_Click(object sender, EventArgs e)
