@@ -1,11 +1,8 @@
 ﻿using IWshRuntimeLibrary;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace RunIt
@@ -14,7 +11,7 @@ namespace RunIt
     {
         private void createGroups()
         {
-            flowLayoutPanel1.Controls.Clear();
+            flowLayoutPanel.Controls.Clear();
             shortcutsFound = false;
 
             if (setFolder != "" && Directory.Exists(setFolder))
@@ -47,7 +44,7 @@ namespace RunIt
                     panel.DragDrop += new DragEventHandler(groupPanel_DragDrop);
                     panel.DragEnter += new DragEventHandler(groupPanel_DragEnter);
                     panel.GiveFeedback += new GiveFeedbackEventHandler(groupPanel_GiveFeedback);
-                    flowLayoutPanel1.Controls.Add(panel);
+                    flowLayoutPanel.Controls.Add(panel);
 
                     Label label = new Label();
                     label.AutoSize = false;
@@ -95,7 +92,6 @@ namespace RunIt
 
             if (icon.Contains(","))
             {
-                //icon = icon.Substring(0, icon.IndexOf(","));
                 icon = shortcut.IconLocation.Split(',')[0];
                 iconIndex = Convert.ToInt32(shortcut.IconLocation.Split(',')[1]);
             }
@@ -118,7 +114,6 @@ namespace RunIt
             panel.AllowDrop = true;
             flowPanel.Controls.Add(panel);
 
-            //int pad = (setShortcutRectangleSize - setIconSize - setShortcutLabelHeight) / 3;
             int pad = (setShortcutRectangleSize - setIconSize - setShortcutLabelHeight) / 2;
 
             PictureBox picture = new PictureBox();
@@ -148,15 +143,25 @@ namespace RunIt
 
             else if (icon != "" && System.IO.File.Exists(icon) && System.IO.Path.GetExtension(icon) == ".ico")
             {
-                Icon myIcon = new Icon(icon);
-                Icon buttonIcon = new Icon(myIcon, setIconSize, setIconSize);
-                picture.Image = buttonIcon.ToBitmap();
+                try
+                {
+                    Icon myIcon = new Icon(icon);
+                    Icon buttonIcon = new Icon(myIcon, setIconSize, setIconSize);
+                    picture.Image = buttonIcon.ToBitmap();
+                }
+
+                catch { }
             }
 
             else if (icon != "" && System.IO.File.Exists(icon) && iconIndex > -1)
             {
-                if (setIconSize == 16) picture.Image = IconExtractor.Extract(icon, iconIndex, false).ToBitmap();
-                else picture.Image = IconExtractor.Extract(icon, iconIndex, true).ToBitmap();
+                try
+                {
+                    if (setIconSize == 16) picture.Image = IconExtractor.Extract(icon, iconIndex, false).ToBitmap();
+                    else picture.Image = IconExtractor.Extract(icon, iconIndex, true).ToBitmap();
+                }
+
+                catch { }
             }
 
             else if (setIconSize == 16) try { picture.Image = ShellEx.GetBitmapFromFilePath(file, ShellEx.IconSizeEnum.SmallIcon16); } catch { }
@@ -181,7 +186,6 @@ namespace RunIt
                 label.Width = setShortcutRectangleSize - 10;
                 label.Height = setShortcutLabelHeight;
                 label.Left = 5;
-                //label.Top = setIconSize + (pad * 2);
                 label.Top = setIconSize + pad + 3;
                 label.ForeColor = setColorShortcutFont;
                 label.Text = Path.GetFileNameWithoutExtension(link);
@@ -208,10 +212,7 @@ namespace RunIt
                 label.Left = 0;
                 label.Top = panel.Bottom;
                 panel.Controls.Add(label);
-
             }
         }
-
-
     }
 }

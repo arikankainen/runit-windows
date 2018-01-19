@@ -1,14 +1,6 @@
-﻿using Microsoft.Win32;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
+﻿using System;
 using System.Drawing;
-using System.Globalization;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace RunIt
@@ -36,14 +28,13 @@ namespace RunIt
         private void FormSettings_Load(object sender, EventArgs e)
         {
             loadSettings();
-            labelVersion.Text = "RunIt v" + Application.ProductVersion + " © 2017 Ari Kankainen";
+            labelVersion.Text = "RunIt v" + Application.ProductVersion + " © 2017 AriK";
 
             tabControl1.SelectedIndex = (Application.OpenForms["Form1"] as Form1).SettingsPage;
         }
 
         private void FormSettings_Shown(object sender, EventArgs e)
         {
-            //(Application.OpenForms["Form1"] as Form1).HideWindow();
             (Application.OpenForms["Form1"] as Form1).ShowWindow();
             this.Activate();
 
@@ -391,10 +382,8 @@ namespace RunIt
                 export.SetSetting("Fade", checkFade.Checked.ToString());
                 export.SetSetting("FadeSpeed", numericFadeSpeed.Value.ToString());
 
-
                 export.WriteSettings();
             }
-
         }
 
         private void btnLoadAppearance_Click(object sender, EventArgs e)
@@ -470,7 +459,6 @@ namespace RunIt
                     else MessageBox.Show("Invalid file.");
                 }
             }
-
         }
 
         // ********** Changed events **********
@@ -522,11 +510,7 @@ namespace RunIt
                 label1.Focus();
             }
 
-            else if (e.KeyCode != Keys.Menu &&
-                e.KeyCode != Keys.ShiftKey &&
-                e.KeyCode != Keys.LWin &&
-                e.KeyCode != Keys.RWin &&
-                e.KeyCode != Keys.ControlKey)
+            else if (e.KeyCode != Keys.Menu && e.KeyCode != Keys.ShiftKey && e.KeyCode != Keys.LWin && e.KeyCode != Keys.RWin && e.KeyCode != Keys.ControlKey)
             {
                 txtHotkey.Text = e.KeyCode.ToString();
                 label1.Focus();
@@ -566,7 +550,6 @@ namespace RunIt
             }
 
             else labelExampleShortcut.Visible = false;
-
         }
 
         private bool validColor(string inputColor)
@@ -620,7 +603,6 @@ namespace RunIt
 
         private void updatePreview()
         {
-            //Screen screen = Screen.FromPoint(Control.MousePosition);
             Screen screen = Screen.FromControl(this);
 
             labelCurrentScreenSize.Text = "Current screen size: " + screen.Bounds.Width + " x " + screen.Bounds.Height;
@@ -642,7 +624,6 @@ namespace RunIt
             int topBottom = (int)(numericTopBottomFixed * heightX);
             int leftRight = (int)(numericLeftRightFixed * widthX);
 
-            //Bitmap background = new Bitmap(Properties.Resources.win, new Size(320, 180));
             Bitmap background = new Bitmap(320, 180);
             Brush brushWhite = new SolidBrush(Color.FromArgb(200, 255, 100, 100));
             Graphics g = Graphics.FromImage(background);
@@ -687,8 +668,6 @@ namespace RunIt
                 g.FillRectangle(brushWhite, new Rectangle(x1, y1, x2, y2));
             }
 
-
-
             if (checkTopLeft.Checked)
             {
                 int x1 = 0;
@@ -729,15 +708,12 @@ namespace RunIt
                 g.FillRectangle(brushWhite, new Rectangle(x1, y1, x2, y2));
             }
 
-
-
             pictureBox1.Image = background;
         }
 
         private void trackFadeDelay_Scroll(object sender, EventArgs e)
         {
             numericFadeSpeed.Value = trackFadeSpeed.Value;
-
         }
 
         private void numericFadeDelay_ValueChanged(object sender, EventArgs e)
@@ -760,7 +736,5 @@ namespace RunIt
             if (Directory.Exists(txtShortcutFolder.Text)) txtShortcutFolder.BackColor = folderExist;
             else txtShortcutFolder.BackColor = folderNotExist;
         }
-
-
     }
 }

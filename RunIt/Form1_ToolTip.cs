@@ -96,8 +96,5 @@ namespace RunIt
                 lastToolTip = toolTipText;
             }
         }
-
-
-
     }
 }

@@ -4,10 +4,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace RunIt
@@ -166,7 +162,7 @@ namespace RunIt
             if (setHotkeyCtrl) mod += "Ctrl";
             if (setHotkeyShift) mod += "Shift";
 
-            hook.DisposeKeysOnly();
+            keyboardHook.DisposeKeysOnly();
             hookKey(mod, setHotkey);
 
             setWaitingTime = settings.GetSetting("MouseWaitingTime", "int", "200");
@@ -295,11 +291,11 @@ namespace RunIt
             setFadeSpeed = settings.GetSetting("FadeSpeed", "int", "15");
             if (setFadeSpeed == 0) setFadeSpeed = 15;
 
-            flowLayoutPanel1.Padding = new Padding(setOuterMargin);
-            flowLayoutPanel1.Width = this.Width - (2 * paddingResizeForm);
-            flowLayoutPanel1.Height = this.Height - (2 * paddingResizeForm);
-            flowLayoutPanel1.Top = paddingResizeForm;
-            flowLayoutPanel1.Left = paddingResizeForm;
+            flowLayoutPanel.Padding = new Padding(setOuterMargin);
+            flowLayoutPanel.Width = this.Width - (2 * paddingResizeForm);
+            flowLayoutPanel.Height = this.Height - (2 * paddingResizeForm);
+            flowLayoutPanel.Top = paddingResizeForm;
+            flowLayoutPanel.Left = paddingResizeForm;
 
             int height = settings.GetSetting("Height", "int", "1200");
             int width = settings.GetSetting("Width", "int", "1200");
@@ -315,10 +311,8 @@ namespace RunIt
         {
             bool visible = this.Visible;
 
-            //this.Visible = false;
-            //this.SuspendLayout();
-            flowLayoutPanel1.Visible = false;
-            flowLayoutPanel1.SuspendLayout();
+            flowLayoutPanel.Visible = false;
+            flowLayoutPanel.SuspendLayout();
 
             saveList();
 
@@ -332,20 +326,14 @@ namespace RunIt
 
             this.Opacity = setOpacity;
 
-            flowLayoutPanel1.ResumeLayout();
-            flowLayoutPanel1.Visible = true;
-            //this.ResumeLayout();
-            //this.Visible = visible;
+            flowLayoutPanel.ResumeLayout();
+            flowLayoutPanel.Visible = true;
 
             resizeWindow();
 
-            //if (!shortcutsFound) HideWindow();
-            //else
-            //{
-                disableFade = true;
-                ShowWindow();
-                disableFade = false;
-            //}
+            disableFade = true;
+            ShowWindow();
+            disableFade = false;
         }
 
         private void saveList()
@@ -356,7 +344,7 @@ namespace RunIt
                 {
                     using (StreamWriter sw = new StreamWriter(Path.Combine(appDir, "shortcuts.cfg")))
                     {
-                        foreach (Control c1 in flowLayoutPanel1.Controls)
+                        foreach (Control c1 in flowLayoutPanel.Controls)
                         {
                             sw.WriteLine("<group>");
                             foreach (Control c2 in c1.Controls)
@@ -396,7 +384,7 @@ namespace RunIt
                     {
                         string line = "";
                         string group = "";
-                        dict.Clear();
+                        dictionary.Clear();
 
                         while (reader.Peek() >= 0)
                         {
@@ -416,7 +404,7 @@ namespace RunIt
                                     list.Add(Path.Combine(setFolder, file));
                                 }
 
-                                dict.Add(group, list);
+                                dictionary.Add(group, list);
                             }
                         }
                     }
@@ -431,9 +419,9 @@ namespace RunIt
         {
             bool groupFound = false;
             int groupIndex = 0;
-            foreach (KeyValuePair<string, List<string>> pair in dict)
+            foreach (KeyValuePair<string, List<string>> pair in dictionary)
             {
-                foreach (Control c1 in flowLayoutPanel1.Controls)
+                foreach (Control c1 in flowLayoutPanel.Controls)
                 {
                     if (c1 is FlowLayoutPanel && c1.Name == "Group")
                     {
@@ -443,7 +431,7 @@ namespace RunIt
                             {
                                 if (c2.Text == pair.Key)
                                 {
-                                    flowLayoutPanel1.Controls.SetChildIndex(c1, groupIndex);
+                                    flowLayoutPanel.Controls.SetChildIndex(c1, groupIndex);
                                     groupFound = true;
                                 }
                             }
@@ -457,7 +445,7 @@ namespace RunIt
                 int valueIndex = 1;
                 foreach (string value in pair.Value)
                 {
-                    foreach (Control c1 in flowLayoutPanel1.Controls)
+                    foreach (Control c1 in flowLayoutPanel.Controls)
                     {
                         if (c1 is FlowLayoutPanel && c1.Name == "Group")
                         {
@@ -492,10 +480,7 @@ namespace RunIt
                     valueIndex++;
                 }
             }
-            flowLayoutPanel1.Invalidate();
+            flowLayoutPanel.Invalidate();
         }
-
-
-
     }
 }

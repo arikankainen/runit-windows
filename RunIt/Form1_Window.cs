@@ -1,11 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace RunIt
@@ -187,8 +181,8 @@ namespace RunIt
 
                 else
                 {
-                    int x = mouseX; //Cursor.Position.X;
-                    int y = mouseY; //Cursor.Position.Y;
+                    int x = mouseX;
+                    int y = mouseY;
 
                     int xCenter = this.Width / 2;
                     int yCenter = this.Height / 2;
@@ -292,26 +286,22 @@ namespace RunIt
 
         private void maximizeHeight()
         {
-            //this.Visible = false;
             Screen screen = Screen.FromPoint(Control.MousePosition);
 
             this.Top = 0;
             this.Height = screen.WorkingArea.Height;
             resizeWindow();
             resizeWindow();
-            //this.Visible = true;
         }
 
         private void maximizeWidth()
         {
-            //this.Visible = false;
             Screen screen = Screen.FromPoint(Control.MousePosition);
 
             this.Top = 0;
             this.Height = 0;
             resizeWindow();
             resizeWindow();
-            //this.Visible = true;
         }
 
         private void resizeWindow()
@@ -326,7 +316,7 @@ namespace RunIt
 
             bool widthWarningTemp = false;
 
-            foreach (Control c1 in flowLayoutPanel1.Controls)
+            foreach (Control c1 in flowLayoutPanel.Controls)
             {
                 if (c1 is FlowLayoutPanel && c1.Name == "Group")
                 {
@@ -396,7 +386,7 @@ namespace RunIt
 
         private void resizeGroups()
         {
-            foreach (Control c1 in flowLayoutPanel1.Controls)
+            foreach (Control c1 in flowLayoutPanel.Controls)
             {
                 if (c1 is FlowLayoutPanel && c1.Name == "Group")
                 {
@@ -418,9 +408,5 @@ namespace RunIt
                 }
             }
         }
-
-
-
-
     }
 }

@@ -1,14 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using IWshRuntimeLibrary;
 using System.Threading;
+using System.Windows.Forms;
 
 namespace RunIt
 {
@@ -16,8 +11,8 @@ namespace RunIt
     {
         private void hookKey(string mod, string key)
         {
-            if (string.IsNullOrEmpty(mod) && !string.IsNullOrEmpty(key)) hook.RegisterHotKey((ModifierKeys)0, (Keys)Enum.Parse(typeof(Keys), key));
-            else if (!string.IsNullOrEmpty(mod) && !string.IsNullOrEmpty(key)) hook.RegisterHotKey((ModifierKeys)Hotkeys.GetGlobalHotkeyModNumber(mod), (Keys)Enum.Parse(typeof(Keys), key));
+            if (string.IsNullOrEmpty(mod) && !string.IsNullOrEmpty(key)) keyboardHook.RegisterHotKey((ModifierKeys)0, (Keys)Enum.Parse(typeof(Keys), key));
+            else if (!string.IsNullOrEmpty(mod) && !string.IsNullOrEmpty(key)) keyboardHook.RegisterHotKey((ModifierKeys)Hotkeys.GetGlobalHotkeyModNumber(mod), (Keys)Enum.Parse(typeof(Keys), key));
         }
 
         private int mouseX;
@@ -52,7 +47,6 @@ namespace RunIt
 
                 try
                 {
-                    //this.Hide();
                     if (!keepOpen) HideWindow();
 
                     Control control = (Control)sender;
@@ -63,10 +57,7 @@ namespace RunIt
                     if (System.IO.File.Exists(file)) Process.Start(startInfo);
                 }
 
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message + ex.StackTrace + Environment.NewLine + Environment.NewLine + file);
-                }
+                catch { }
             }
 
             else if (e.Button == MouseButtons.Right)
@@ -134,24 +125,14 @@ namespace RunIt
 
             timerMouse.Start();
             disableFade = false;
-
-            //if (!shortcutsFound)
-            //{
-            //    menuSettings.PerformClick();
-            //}
         }
 
         private void notifyIcon1_MouseClick(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
             {
-                //if (shortcutsFound)
-                //{
-                    mousePosition();
-                    ShowWindow();
-                //}
-
-                //else menuSettings.PerformClick();
+                mousePosition();
+                ShowWindow();
             }
         }
 
@@ -166,7 +147,6 @@ namespace RunIt
                 HideWindow();
             }
         }
-
 
         private void Form1_ResizeBegin(object sender, EventArgs e)
         {
@@ -235,32 +215,6 @@ namespace RunIt
 
             Point screenPoint = Cursor.Position;
             if (e.Button == MouseButtons.Right) contextGroup.Show(this, this.PointToClient(screenPoint));
-
-            /*
-            int lnkFound = 0;
-            if (Clipboard.ContainsFileDropList())
-            {
-                System.Collections.Specialized.StringCollection list;
-                list = Clipboard.GetFileDropList();
-
-                foreach (string file in list)
-                {
-                    string fileExt = Path.GetExtension(file);
-                    if (fileExt == ".lnk") lnkFound++;
-                }
-            }
-            if (lnkFound > 0) menuPaste.Enabled = true;
-            else menuPaste.Enabled = false;
-
-            if (lnkFound <= 1) menuPaste.Text = "Paste shortcut";
-            else menuPaste.Text = "Paste " + lnkFound + " shortcuts";
-
-            clickedLabel = (Label)sender;
-            menuGroupDelete.Tag = menuGroupRename.Tag = menuPaste.Tag = clickedLabel.Text;
-
-            Point screenPoint = Cursor.Position;
-            if (e.Button == MouseButtons.Right) contextGroup.Show(this, this.PointToClient(screenPoint));
-            */
         }
 
         private void flow_MouseUp(object sender, MouseEventArgs e)
@@ -470,22 +424,6 @@ namespace RunIt
                 Clipboard.Clear();
                 ReloadSettings(true);
             }
-
-            /*
-            if (Clipboard.ContainsFileDropList())
-            {
-                System.Collections.Specialized.StringCollection list;
-                list = Clipboard.GetFileDropList();
-
-                foreach (string file in list)
-                {
-                    addShortcut(file, menuPaste.Tag.ToString());
-                }
-
-                Clipboard.Clear();
-                ReloadSettings(true);
-            }
-            */
         }
 
         private void menuSavePosition_Click(object sender, EventArgs e)
@@ -523,16 +461,6 @@ namespace RunIt
         private void menuRefresh_Click(object sender, EventArgs e)
         {
             ReloadSettings(true);
-            /*
-            this.Visible = false;
-            this.SuspendLayout();
-            saveList();
-            createGroups();
-
-            Application.DoEvents();
-            this.ResumeLayout();
-            this.Visible = true;
-            */
         }
 
         private void menuOpenFolder_Click(object sender, EventArgs e)
@@ -660,7 +588,6 @@ namespace RunIt
 
                         else HideWindow();
                     }
-
                 }
             }
 
@@ -670,9 +597,5 @@ namespace RunIt
                 mouseHit = false;
             }
         }
-
-
-
-
     }
 }

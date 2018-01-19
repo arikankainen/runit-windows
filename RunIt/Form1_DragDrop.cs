@@ -107,12 +107,12 @@ namespace RunIt
 
         private void moveGroup(FlowLayoutPanel sourceGroup, FlowLayoutPanel destGroup)
         {
-            int index = flowLayoutPanel1.Controls.GetChildIndex(destGroup, false);
+            int index = flowLayoutPanel.Controls.GetChildIndex(destGroup, false);
 
-            flowLayoutPanel1.Controls.SetChildIndex(sourceGroup, index);
-            flowLayoutPanel1.SuspendLayout();
-            flowLayoutPanel1.Invalidate();
-            flowLayoutPanel1.ResumeLayout();
+            flowLayoutPanel.Controls.SetChildIndex(sourceGroup, index);
+            flowLayoutPanel.SuspendLayout();
+            flowLayoutPanel.Invalidate();
+            flowLayoutPanel.ResumeLayout();
 
             resizeGroups();
             resizeWindow();
@@ -413,20 +413,6 @@ namespace RunIt
 
         private void groupLabel_DragDrop(object sender, DragEventArgs e)
         {
-            //if (e.Data.GetDataPresent(DataFormats.FileDrop))
-            //{
-            //    string[] filePaths = (string[])(e.Data.GetData(DataFormats.FileDrop));
-
-            //    foreach (string file in filePaths)
-            //    {
-            //        if (File.Exists(file))
-            //        {
-            //            MessageBox.Show(file);
-            //        }
-
-            //    }
-            //}
-
             if (draggingShortcut)
             {
                 Control c = (Control)sender;
