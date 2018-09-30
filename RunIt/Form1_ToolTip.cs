@@ -72,28 +72,33 @@ namespace RunIt
             timerToolTip.Stop();
             if (setShowShortcutTooltips)
             {
-                WshShell shell = new WshShell();
-                WshShortcut shortcut = (WshShortcut)shell.CreateShortcut(control.Tag.ToString());
+                try
+                {
+                    WshShell shell = new WshShell();
+                    WshShortcut shortcut = (WshShortcut)shell.CreateShortcut(control.Tag.ToString());
 
-                string comment = shortcut.Description;
-                string name = Path.GetFileNameWithoutExtension(control.Tag.ToString());
+                    string comment = shortcut.Description;
+                    string name = Path.GetFileNameWithoutExtension(control.Tag.ToString());
 
-                IWin32Window win = this;
+                    IWin32Window win = this;
 
-                Point locationOnForm = control.FindForm().PointToClient(control.Parent.PointToScreen(control.Location));
+                    Point locationOnForm = control.FindForm().PointToClient(control.Parent.PointToScreen(control.Location));
 
-                int x = locationOnForm.X + (control.Width / 2);
-                int y = locationOnForm.Y + control.Height + setToolTipMarginTop;
+                    int x = locationOnForm.X + (control.Width / 2);
+                    int y = locationOnForm.Y + control.Height + setToolTipMarginTop;
 
-                toolTipText = name;
-                if (comment != "") toolTipText = toolTipText + Environment.NewLine + comment;
+                    toolTipText = name;
+                    if (comment != "") toolTipText = toolTipText + Environment.NewLine + comment;
 
-                Size textSize = TextRenderer.MeasureText(toolTipText, setShortcutFont);
-                toolTipWidth = textSize.Width + 10 + setToolTipPaddingWidth;
-                toolTipHeight = textSize.Height + 4 + setToolTipPaddingHeight;
+                    Size textSize = TextRenderer.MeasureText(toolTipText, setShortcutFont);
+                    toolTipWidth = textSize.Width + 10 + setToolTipPaddingWidth;
+                    toolTipHeight = textSize.Height + 4 + setToolTipPaddingHeight;
 
-                if (toolTipText != lastToolTip) tip.Show(toolTipText, win, x - (toolTipWidth / 2), y);
-                lastToolTip = toolTipText;
+                    if (toolTipText != lastToolTip) tip.Show(toolTipText, win, x - (toolTipWidth / 2), y);
+                    lastToolTip = toolTipText;
+                }
+
+                catch { }
             }
         }
     }

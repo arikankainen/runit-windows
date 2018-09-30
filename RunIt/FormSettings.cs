@@ -28,7 +28,7 @@ namespace RunIt
         private void FormSettings_Load(object sender, EventArgs e)
         {
             loadSettings();
-            labelVersion.Text = "RunIt v" + Application.ProductVersion + " © 2017 AriK";
+            labelVersion.Text = "RunIt v" + Application.ProductVersion + " © 2018 AriK";
 
             tabControl1.SelectedIndex = (Application.OpenForms["Form1"] as Form1).SettingsPage;
         }

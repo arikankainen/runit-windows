@@ -1,4 +1,5 @@
-﻿using System;
+﻿using IWshRuntimeLibrary;
+using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -76,6 +77,21 @@ namespace RunIt
                     showShortcutContext((Panel)control.Parent, e.Location);
                 }
             }
+
+            else if (e.Button == MouseButtons.Middle)
+            {
+                string file = null;
+
+                try
+                {
+                    Control control = (Control)sender;
+                    file = control.Tag.ToString();
+
+                    CreateFolderMenu(file);
+                }
+
+                catch { }
+            }
         }
 
         private void hideToolTip()
@@ -125,6 +141,12 @@ namespace RunIt
 
             timerMouse.Start();
             disableFade = false;
+
+            if (showAtStart)
+            {
+                mousePosition();
+                ShowWindow();
+            }
         }
 
         private void notifyIcon1_MouseClick(object sender, MouseEventArgs e)
@@ -184,8 +206,21 @@ namespace RunIt
         private void showShortcutContext(Panel panel, Point location)
         {
             menuShortcutDelete.Tag = menuShortcutEdit.Tag = menuShortcutRename.Tag = panel.Tag;
+            string link = panel.Tag.ToString();
 
             Point screenPoint = Cursor.Position;
+
+            WshShell shell = new WshShell();
+            WshShortcut shortcut = (WshShortcut)shell.CreateShortcut(link);
+
+            string linkFile = shortcut.TargetPath;
+            string linkIcon = shortcut.IconLocation;
+
+            menuShortcutTopic.Text = Path.GetFileNameWithoutExtension(panel.Tag.ToString());
+            if (isUrl(linkFile)) menuShortcutTopic.Image = Properties.Resources.url.ToBitmap();
+            else menuShortcutTopic.Image = GetIcon(link);
+            menuShortcutTopic.Font = new Font(menuShortcutTopic.Font, FontStyle.Bold);
+
             contextShortcut.Show(this, this.PointToClient(screenPoint));
         }
 
@@ -214,6 +249,9 @@ namespace RunIt
             menuGroupDelete.Tag = menuGroupRename.Tag = menuPaste.Tag = clickedLabel.Text;
 
             Point screenPoint = Cursor.Position;
+            menuGroupTopic.Text = Path.GetFileNameWithoutExtension(clickedLabel.Text);
+            menuGroupTopic.Image = GetGroupIcon();
+            menuGroupTopic.Font = new Font(menuGroupTopic.Font, FontStyle.Bold);
             if (e.Button == MouseButtons.Right) contextGroup.Show(this, this.PointToClient(screenPoint));
         }
 
@@ -242,38 +280,64 @@ namespace RunIt
             settingsOpen = true;
             windowDragged = true;
 
-            FormRename form = new FormRename();
-            form.Topic = "Rename shortcut";
-            form.NewName = name;
-            form.ShowDialog();
+            Form_Message m = new Form_Message();
+            m.ColorBackground = setColorBackground;
+            m.ColorBackgroundButton = setColorShortcutBackground;
+            m.ColorBackgroundButtonHover = setColorShortcutBackgroundHover;
+            m.ColorBackgroundTopic = setColorGroupBackground;
+            m.ColorTopic = setColorGroupFont;
+            m.ColorText = setColorShortcutFont;
+            m.ColorBorder = setColorGroupBackground;
+            m.FontTopic = setGroupFont;
+            m.FontText = setShortcutFont;
+            m.LocationX = MousePosition.X;
+            m.LocationY = MousePosition.Y;
+            m.BorderSize = setGroupMargin * 2;
+            m.MarginElements = setShortcutMargin * 2;
+            m.LocationMargin = setLocationMargin;
+            m.FadeSpeed = setFadeSpeed;
+            m.TopicHeight = setGroupLabel;
+            m.TopicAlign = setGroupTopicAlign;
+            m.ShowTextBox = true;
+            m.Opa = this.Opacity;
+            m.Topic = "Rename shortcut";
+            m.Message = "Enter a new name for " + name;
+            m.TextEntered = name;
 
-            if (form.NewName != "")
+            double opa = this.Opacity;
+            this.Opacity = opa - .1;
+            m.ShowDialog();
+            this.Opacity = opa;
+
+            if (m.Result == DialogResult.OK)
             {
-                string oldName = file;
-                string newName = Path.Combine(path, form.NewName + ".lnk");
-                string oldNamePng = oldName.Replace(".lnk", ".png");
-                string newNamePng = newName.Replace(".lnk", ".png");
-
-                bool success = false;
-
-                try
+                if (m.TextEntered != "")
                 {
-                    if (!System.IO.File.Exists(newName))
+                    string oldName = file;
+                    string newName = Path.Combine(path, m.TextEntered + ".lnk");
+                    string oldNamePng = oldName.Replace(".lnk", ".png");
+                    string newNamePng = newName.Replace(".lnk", ".png");
+
+                    bool success = false;
+
+                    try
                     {
-                        if (System.IO.File.Exists(oldName)) System.IO.File.Move(oldName, newName);
-                        if (System.IO.File.Exists(oldNamePng)) System.IO.File.Move(oldNamePng, newNamePng);
-                        success = true;
+                        if (!System.IO.File.Exists(newName))
+                        {
+                            if (System.IO.File.Exists(oldName)) System.IO.File.Move(oldName, newName);
+                            if (System.IO.File.Exists(oldNamePng)) System.IO.File.Move(oldNamePng, newNamePng);
+                            success = true;
+                        }
+                    }
+
+                    catch { }
+
+                    if (success)
+                    {
+                        clickedPanel.Tag = newName;
+                        ReloadSettings(true);
                     }
                 }
-
-                catch { }
-
-                if (success)
-                {
-                    clickedPanel.Tag = newName;
-                    ReloadSettings(true);
-                }
-
             }
 
             settingsOpen = false;
@@ -302,9 +366,35 @@ namespace RunIt
             string file = menuShortcutDelete.Tag.ToString();
             string name = Path.GetFileNameWithoutExtension(file);
 
-            DialogResult result = MessageBox.Show(name, "Delete shortcut?", MessageBoxButtons.YesNo);
+            Form_Message m = new Form_Message();
+            m.ColorBackground = setColorBackground;
+            m.ColorBackgroundButton = setColorShortcutBackground;
+            m.ColorBackgroundButtonHover = setColorShortcutBackgroundHover;
+            m.ColorBackgroundTopic = setColorGroupBackground;
+            m.ColorTopic = setColorGroupFont;
+            m.ColorText = setColorShortcutFont;
+            m.ColorBorder = setColorGroupBackground;
+            m.FontTopic = setGroupFont;
+            m.FontText = setShortcutFont;
+            m.LocationX = MousePosition.X;
+            m.LocationY = MousePosition.Y;
+            m.BorderSize = setGroupMargin * 2;
+            m.MarginElements = setShortcutMargin * 2;
+            m.LocationMargin = setLocationMargin;
+            m.FadeSpeed = setFadeSpeed;
+            m.TopicHeight = setGroupLabel;
+            m.TopicAlign = setGroupTopicAlign;
+            m.ShowTextBox = false;
+            m.Opa = this.Opacity;
+            m.Topic = "Delete shortcut";
+            m.Message = "Really delete shortcut " + name + "?";
 
-            if (result == DialogResult.Yes)
+            double opa = this.Opacity;
+            this.Opacity = opa - .1;
+            m.ShowDialog();
+            this.Opacity = opa;
+
+            if (m.Result == DialogResult.OK)
             {
                 if (System.IO.File.Exists(file)) System.IO.File.Delete(file);
 
@@ -319,31 +409,57 @@ namespace RunIt
             settingsOpen = true;
             windowDragged = true;
 
-            FormRename form = new FormRename();
-            form.Topic = "Add new group";
-            form.ButtonName = "Add";
-            form.ShowDialog();
+            Form_Message m = new Form_Message();
+            m.ColorBackground = setColorBackground;
+            m.ColorBackgroundButton = setColorShortcutBackground;
+            m.ColorBackgroundButtonHover = setColorShortcutBackgroundHover;
+            m.ColorBackgroundTopic = setColorGroupBackground;
+            m.ColorTopic = setColorGroupFont;
+            m.ColorText = setColorShortcutFont;
+            m.ColorBorder = setColorGroupBackground;
+            m.FontTopic = setGroupFont;
+            m.FontText = setShortcutFont;
+            m.LocationX = MousePosition.X;
+            m.LocationY = MousePosition.Y;
+            m.BorderSize = setGroupMargin * 2;
+            m.MarginElements = setShortcutMargin * 2;
+            m.LocationMargin = setLocationMargin;
+            m.FadeSpeed = setFadeSpeed;
+            m.TopicHeight = setGroupLabel;
+            m.TopicAlign = setGroupTopicAlign;
+            m.ShowTextBox = true;
+            m.Opa = this.Opacity;
+            m.Topic = "Add new group";
+            m.Message = "Enter a name for a new group";
 
-            if (form.NewName != "")
+            double opa = this.Opacity;
+            this.Opacity = opa - .1;
+            m.ShowDialog();
+            this.Opacity = opa;
+
+            if (m.Result == DialogResult.OK)
             {
-                bool success = false;
-
-                try
+                if (m.TextEntered != "")
                 {
-                    string dir = Path.Combine(setFolder, form.NewName);
+                    bool success = false;
 
-                    if (!Directory.Exists(dir))
+                    try
                     {
-                        Directory.CreateDirectory(dir);
-                        success = true;
+                        string dir = Path.Combine(setFolder, m.TextEntered);
+
+                        if (!Directory.Exists(dir))
+                        {
+                            Directory.CreateDirectory(dir);
+                            success = true;
+                        }
                     }
-                }
 
-                catch { }
+                    catch { }
 
-                if (success)
-                {
-                    ReloadSettings(true);
+                    if (success)
+                    {
+                        ReloadSettings(true);
+                    }
                 }
             }
 
@@ -357,33 +473,60 @@ namespace RunIt
             settingsOpen = true;
             windowDragged = true;
 
-            FormRename form = new FormRename();
-            form.Topic = "Rename group";
-            form.NewName = group;
-            form.ShowDialog();
+            Form_Message m = new Form_Message();
+            m.ColorBackground = setColorBackground;
+            m.ColorBackgroundButton = setColorShortcutBackground;
+            m.ColorBackgroundButtonHover = setColorShortcutBackgroundHover;
+            m.ColorBackgroundTopic = setColorGroupBackground;
+            m.ColorTopic = setColorGroupFont;
+            m.ColorText = setColorShortcutFont;
+            m.ColorBorder = setColorGroupBackground;
+            m.FontTopic = setGroupFont;
+            m.FontText = setShortcutFont;
+            m.LocationX = MousePosition.X;
+            m.LocationY = MousePosition.Y;
+            m.BorderSize = setGroupMargin * 2;
+            m.MarginElements = setShortcutMargin * 2;
+            m.LocationMargin = setLocationMargin;
+            m.FadeSpeed = setFadeSpeed;
+            m.TopicHeight = setGroupLabel;
+            m.TopicAlign = setGroupTopicAlign;
+            m.ShowTextBox = true;
+            m.Opa = this.Opacity;
+            m.Topic = "Rename group";
+            m.Message = "Enter a new name for " + group;
+            m.TextEntered = group;
 
-            if (form.NewName != "")
+            double opa = this.Opacity;
+            this.Opacity = opa - .1;
+            m.ShowDialog();
+            this.Opacity = opa;
+
+            if (m.Result == DialogResult.OK)
             {
-                string oldName = Path.Combine(setFolder, group);
-                string newName = Path.Combine(setFolder, form.NewName);
-
-                bool success = false;
-
-                try
+                if (m.TextEntered != "")
                 {
-                    if (!Directory.Exists(newName))
+                    string oldName = Path.Combine(setFolder, group);
+                    string newName = Path.Combine(setFolder, m.TextEntered);
+
+                    bool success = false;
+
+                    try
                     {
-                        if (Directory.Exists(oldName)) Directory.Move(oldName, newName);
-                        success = true;
+                        if (!Directory.Exists(newName))
+                        {
+                            if (Directory.Exists(oldName)) Directory.Move(oldName, newName);
+                            success = true;
+                        }
                     }
-                }
 
-                catch { }
+                    catch { }
 
-                if (success)
-                {
-                    clickedLabel.Text = form.NewName;
-                    ReloadSettings(true);
+                    if (success)
+                    {
+                        clickedLabel.Text = m.TextEntered;
+                        ReloadSettings(true);
+                    }
                 }
             }
 
@@ -398,9 +541,35 @@ namespace RunIt
             string group = menuGroupDelete.Tag.ToString();
             string dir = Path.Combine(setFolder, group);
 
-            DialogResult result = MessageBox.Show(group, "Delete group?", MessageBoxButtons.YesNo);
+            Form_Message m = new Form_Message();
+            m.ColorBackground = setColorBackground;
+            m.ColorBackgroundButton = setColorShortcutBackground;
+            m.ColorBackgroundButtonHover = setColorShortcutBackgroundHover;
+            m.ColorBackgroundTopic = setColorGroupBackground;
+            m.ColorTopic = setColorGroupFont;
+            m.ColorText = setColorShortcutFont;
+            m.ColorBorder = setColorGroupBackground;
+            m.FontTopic = setGroupFont;
+            m.FontText = setShortcutFont;
+            m.LocationX = MousePosition.X;
+            m.LocationY = MousePosition.Y;
+            m.BorderSize = setGroupMargin * 2;
+            m.MarginElements = setShortcutMargin * 2;
+            m.LocationMargin = setLocationMargin;
+            m.FadeSpeed = setFadeSpeed;
+            m.TopicHeight = setGroupLabel;
+            m.TopicAlign = setGroupTopicAlign;
+            m.ShowTextBox = false;
+            m.Opa = this.Opacity;
+            m.Topic = "Delete group";
+            m.Message = "Really delete group " + group + "?";
 
-            if (result == DialogResult.Yes)
+            double opa = this.Opacity;
+            this.Opacity = opa - .1;
+            m.ShowDialog();
+            this.Opacity = opa;
+
+            if (m.Result == DialogResult.OK)
             {
                 if (Directory.Exists(dir)) Directory.Delete(dir, true);
 

@@ -20,6 +20,21 @@ namespace RunIt
         private Color setColorToolTipBackground;
         private Color setColorToolTipFont;
 
+        public Color SetColorShortcutBackgroundHover
+        {
+            get { return setColorShortcutBackgroundHover; }
+        }
+
+        public Color SetColorShortcutBackground
+        {
+            get { return setColorShortcutBackground; }
+        }
+
+        public Color SetColorGroupBackground
+        {
+            get { return setColorGroupBackground; }
+        }
+
         private Font setGroupFont;
         private Font setShortcutFont;
 
@@ -208,7 +223,7 @@ namespace RunIt
 
             string setColorGroupFontTemp = settings.GetSetting("ColorGroupFont", "string", "#ADADAD");
             string setColorShortcutFontTemp = settings.GetSetting("ColorShortcutFont", "string", "#DADADA");
-            string setColorToolTipFontTemp = settings.GetSetting("ColorShortcutFont", "string", "#DADADA");
+            string setColorToolTipFontTemp = settings.GetSetting("ColorTooltipFont", "string", "#DADADA");
 
             if (setColorBackgroundTemp == "") setColorBackgroundTemp = "#1F1F1F";
             if (setColorGroupBackgroundTemp == "") setColorGroupBackgroundTemp = "#161616";
@@ -305,6 +320,11 @@ namespace RunIt
 
             this.BackColor = setColorBackground;
             createGroups();
+
+            contextFolder.Renderer = contextForm.Renderer = contextShortcut.Renderer = contextGroup.Renderer = new MyRenderer(this);
+            contextFolder.BackColor = contextForm.BackColor = contextShortcut.BackColor = contextGroup.BackColor = setColorShortcutBackground;
+            contextFolder.ForeColor = contextForm.ForeColor = contextShortcut.ForeColor = contextGroup.ForeColor = setColorShortcutFont;
+            //menuShortcutTopic.Font = menuGroupTopic.Font = setGroupFont;
         }
 
         public void ReloadSettings(bool saveDimensions)

@@ -13,7 +13,7 @@ namespace RunIt
         private static string appGuid = "40a66c33-14ab-42c5-a53a-8633f2a667b2";
 
         [STAThread]
-        static void Main()
+        static void Main(string[] args)
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
@@ -26,7 +26,7 @@ namespace RunIt
                     return;
                 }
 
-                Application.Run(new Form1());
+                Application.Run(new Form1(args));
             }
 
         }

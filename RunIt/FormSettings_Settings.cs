@@ -66,7 +66,7 @@ namespace RunIt
 
             txtColorGroupFont.Text = settings.GetSetting("ColorGroupFont", "string", "#ADADAD");
             txtColorShortcutFont.Text = settings.GetSetting("ColorShortcutFont", "string", "#DADADA");
-            txtColorTooltipFont.Text = settings.GetSetting("ColorShortcutFont", "string", "#DADADA");
+            txtColorTooltipFont.Text = settings.GetSetting("ColorTooltipFont", "string", "#DADADA");
 
 
             if (txtColorBackground.Text == "") txtColorBackground.Text = "#1F1F1F";

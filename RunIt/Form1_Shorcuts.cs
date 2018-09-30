@@ -3,12 +3,180 @@ using System;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using Microsoft.Win32;
+using System.Diagnostics;
 
 namespace RunIt
 {
     public partial class Form1
     {
+        private class MyRenderer : ToolStripProfessionalRenderer
+        {
+            public MyRenderer(Form1 form) : base(new MyColors(form)) { }
+        }
+
+        private class MyColors : ProfessionalColorTable
+        {
+            Form1 _form;
+
+            public MyColors(Form1 form)
+            {
+                _form = form;
+            }
+
+            public override Color MenuItemSelected
+            {
+                get { return _form.SetColorShortcutBackgroundHover; }
+            }
+
+            public override Color MenuItemBorder
+            {
+                get { return _form.SetColorShortcutBackground; }
+            }
+
+            public override Color MenuBorder
+            {
+                get { return _form.SetColorGroupBackground; }
+            }
+
+            public override Color SeparatorDark
+            {
+                get { return _form.SetColorShortcutBackgroundHover; }
+            }
+
+            public override Color SeparatorLight
+            {
+                get { return _form.SetColorShortcutBackground; }
+            }
+
+            public override Color ImageMarginGradientBegin
+            {
+                get { return _form.SetColorShortcutBackground; }
+            }
+
+            public override Color ImageMarginGradientMiddle
+            {
+                get { return _form.SetColorShortcutBackground; }
+            }
+
+            public override Color ImageMarginGradientEnd
+            {
+                get { return _form.SetColorShortcutBackground; }
+            }
+        }
+
+        private Bitmap exctractIconSmall(string fName)
+        {
+            try
+            {
+                SHFILEINFO shinfo = new SHFILEINFO();
+                IntPtr hImgSmall = Win32.SHGetFileInfo(fName, 0, ref shinfo, (uint)Marshal.SizeOf(shinfo), Win32.SHGFI_ICON | Win32.SHGFI_SMALLICON);
+                Icon icon = (Icon)Icon.FromHandle(shinfo.hIcon).Clone();
+                Win32.DestroyIcon(shinfo.hIcon);
+
+                return icon.ToBitmap();
+            }
+
+            catch
+            {
+                return new Bitmap(16, 16);
+            }
+        }
+
+        private bool isUrl(string filename)
+        {
+            if (filename.Contains("http://") || filename.Contains("https://") || filename.Contains("ftp://")) return true;
+            else return false;
+        }
+
+        private void CreateFolderMenu(string link)
+        {
+            WshShell shell = new WshShell();
+            WshShortcut shortcut = (WshShortcut)shell.CreateShortcut(link);
+
+            string linkFolder = shortcut.TargetPath;
+            string linkArguments = shortcut.Arguments;
+            string linkIcon = shortcut.IconLocation;
+
+            if (Directory.Exists(linkFolder))
+            {
+                string[] folderList = Directory.GetDirectories(linkFolder, "*", SearchOption.TopDirectoryOnly);
+                string[] fileList = Directory.GetFiles(linkFolder, "*", SearchOption.TopDirectoryOnly);
+
+                contextFolder.Items.Clear();
+                contextFolder.SuspendLayout();
+
+                ToolStripMenuItem topItem = new ToolStripMenuItem();
+                topItem.Text = Path.GetFileName(linkFolder);
+                //topItem.Font = setGroupFont;
+                topItem.Font = new Font(topItem.Font, FontStyle.Bold);
+                topItem.Image = exctractIconSmall(linkFolder);
+
+                contextFolder.Items.Add(topItem);
+
+                contextFolder.Items.Add("-");
+
+                foreach (string file in folderList)
+                {
+                    ToolStripMenuItem item = new ToolStripMenuItem();
+                    item.Text = Path.GetFileName(file);
+                    item.Tag = file;
+                    item.ImageScaling = ToolStripItemImageScaling.None;
+
+                    if (isUrl(file)) item.Image = Properties.Resources.url.ToBitmap();
+                    else item.Image = exctractIconSmall(file);
+
+                    item.Click += new EventHandler(toolStripMenuItem_Click);
+
+                    contextFolder.Items.Add(item);
+                }
+
+                if (folderList.Count() > 0) contextFolder.Items.Add("-");
+
+                foreach (string file in fileList)
+                {
+                    ToolStripMenuItem item = new ToolStripMenuItem();
+                    item.Text = Path.GetFileName(file);
+                    item.Tag = file;
+                    item.ImageScaling = ToolStripItemImageScaling.None;
+
+                    if (isUrl(file)) item.Image = Properties.Resources.url.ToBitmap();
+                    else item.Image = exctractIconSmall(file);
+
+                    item.Click += new EventHandler(toolStripMenuItem_Click);
+
+                    contextFolder.Items.Add(item);
+                }
+
+                if (folderList.Count() == 0 && fileList.Count() == 0)
+                {
+                    ToolStripMenuItem emptyItem = new ToolStripMenuItem();
+                    emptyItem.Text = "Empty folder";
+                    emptyItem.ImageScaling = ToolStripItemImageScaling.None;
+                    emptyItem.Enabled = false;
+                    contextFolder.Items.Add(emptyItem);
+                }
+
+                contextFolder.ResumeLayout();
+                contextFolder.Show(MousePosition);
+            }
+        }
+
+        private void toolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ToolStripMenuItem item = (ToolStripMenuItem)sender;
+            string filename = item.Tag.ToString();
+
+            if (System.IO.File.Exists(filename) || Directory.Exists(filename) || isUrl(filename))
+            {
+                Process.Start(filename);
+            }
+
+            else MessageBox.Show("File or folder \"" + filename + "\" does not exists.", "RunIt");
+        }
+
         private void createGroups()
         {
             flowLayoutPanel.Controls.Clear();
@@ -77,6 +245,81 @@ namespace RunIt
 
                 loadList();
             }
+        }
+
+        private Image GetGroupIcon()
+        {
+            Image image = new Bitmap(16, 16);
+
+            using (Graphics g = Graphics.FromImage(image))
+            {
+                g.FillRectangle(new SolidBrush(setColorGroupBackground), 0, 0, 16, 16);
+                g.FillRectangle(new SolidBrush(setColorShortcutBackground), 2, 2, 5, 5);
+                g.FillRectangle(new SolidBrush(setColorShortcutBackground), 9, 2, 5, 5);
+                g.FillRectangle(new SolidBrush(setColorShortcutBackground), 2, 9, 5, 5);
+            }
+
+            return image;
+        }
+
+        private Image GetIcon(string link)
+        {
+            Image image = new Bitmap(16, 16);
+
+            WshShell shell = new WshShell();
+            WshShortcut shortcut = (WshShortcut)shell.CreateShortcut(link);
+
+            string png = link.Replace(".lnk", ".png");
+            string file = shortcut.TargetPath;
+            string icon = shortcut.IconLocation;
+            int iconIndex = -1;
+
+            if (icon.Contains(","))
+            {
+                icon = shortcut.IconLocation.Split(',')[0];
+                iconIndex = Convert.ToInt32(shortcut.IconLocation.Split(',')[1]);
+            }
+
+            if (System.IO.File.Exists(png))
+            {
+                try
+                {
+                    Image img;
+                    using (var bmpTemp = new Bitmap(png))
+                    {
+                        img = new Bitmap(bmpTemp);
+                    }
+                    image = img;
+                }
+
+                catch { }
+            }
+
+            else if (icon != "" && System.IO.File.Exists(icon) && System.IO.Path.GetExtension(icon) == ".ico")
+            {
+                try
+                {
+                    Icon myIcon = new Icon(icon);
+                    Icon buttonIcon = new Icon(myIcon, setIconSize, setIconSize);
+                    image = buttonIcon.ToBitmap();
+                }
+
+                catch { }
+            }
+
+            else if (icon != "" && System.IO.File.Exists(icon) && iconIndex > -1)
+            {
+                try
+                {
+                    image = IconExtractor.Extract(icon, iconIndex, false).ToBitmap();
+                }
+
+                catch { }
+            }
+
+            else try { image = ShellEx.GetBitmapFromFilePath(file, ShellEx.IconSizeEnum.SmallIcon16); } catch { }
+
+            return image;
         }
 
         private void createShortcut(string link, FlowLayoutPanel flowPanel)

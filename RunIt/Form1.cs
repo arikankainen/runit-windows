@@ -35,6 +35,8 @@ namespace RunIt
             set { settingsPage = value; }
         }
 
+        private bool showAtStart = false;
+
         Dictionary<string, List<string>> dictionary = new Dictionary<string, List<string>>();
 
         // double buffered controls
@@ -49,7 +51,7 @@ namespace RunIt
             }
         }
 
-        public Form1()
+        public Form1(string[] args)
         {
             InitializeComponent();
 
@@ -59,7 +61,7 @@ namespace RunIt
             this.LostFocus += new EventHandler(Form1_LostFocus);
             keyboardHook.KeyPressed += new EventHandler<KeyPressedEventArgs>(hook_KeyPressed);
 
-            notifyIcon1.ContextMenu = contextForm;
+            notifyIcon1.ContextMenu = contextTray;
 
             prepareToolTip();
 
@@ -74,6 +76,14 @@ namespace RunIt
             this.Controls.Add(flowLayoutPanel);
 
             loadSettings();
+
+            for (int i = 0; i < args.Length; i++)
+            {
+                if (args[i] == "--show")
+                {
+                    showAtStart = true;
+                }
+            }
         }
     }
 }
