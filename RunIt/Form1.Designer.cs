@@ -47,6 +47,8 @@
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextShortcut = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.menuShortcutTopic = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem11 = new System.Windows.Forms.ToolStripSeparator();
             this.menuShortcutRename = new System.Windows.Forms.ToolStripMenuItem();
             this.menuShortcutEdit = new System.Windows.Forms.ToolStripMenuItem();
             this.menuShortcutDelete = new System.Windows.Forms.ToolStripMenuItem();
@@ -60,6 +62,8 @@
             this.helpToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.contextGroup = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.menuGroupTopic = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem12 = new System.Windows.Forms.ToolStripSeparator();
             this.menuGroupNew = new System.Windows.Forms.ToolStripMenuItem();
             this.menuGroupRename = new System.Windows.Forms.ToolStripMenuItem();
             this.menuGroupDelete = new System.Windows.Forms.ToolStripMenuItem();
@@ -80,10 +84,6 @@
             this.menuItem20 = new System.Windows.Forms.MenuItem();
             this.menuItem21 = new System.Windows.Forms.MenuItem();
             this.menuItem22 = new System.Windows.Forms.MenuItem();
-            this.menuShortcutTopic = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem11 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripMenuItem12 = new System.Windows.Forms.ToolStripSeparator();
-            this.menuGroupTopic = new System.Windows.Forms.ToolStripMenuItem();
             this.contextForm.SuspendLayout();
             this.contextShortcut.SuspendLayout();
             this.contextGroup.SuspendLayout();
@@ -223,6 +223,18 @@
             this.contextShortcut.ShowItemToolTips = false;
             this.contextShortcut.Size = new System.Drawing.Size(186, 248);
             // 
+            // menuShortcutTopic
+            // 
+            this.menuShortcutTopic.Name = "menuShortcutTopic";
+            this.menuShortcutTopic.Size = new System.Drawing.Size(185, 22);
+            this.menuShortcutTopic.Text = "Shortcut topic";
+            this.menuShortcutTopic.Click += new System.EventHandler(this.toolStripMenuItem_Click);
+            // 
+            // toolStripMenuItem11
+            // 
+            this.toolStripMenuItem11.Name = "toolStripMenuItem11";
+            this.toolStripMenuItem11.Size = new System.Drawing.Size(182, 6);
+            // 
             // menuShortcutRename
             // 
             this.menuShortcutRename.Name = "menuShortcutRename";
@@ -324,7 +336,19 @@
             this.contextGroup.Name = "contextFolder";
             this.contextGroup.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
             this.contextGroup.ShowItemToolTips = false;
-            this.contextGroup.Size = new System.Drawing.Size(186, 276);
+            this.contextGroup.Size = new System.Drawing.Size(186, 298);
+            // 
+            // menuGroupTopic
+            // 
+            this.menuGroupTopic.Name = "menuGroupTopic";
+            this.menuGroupTopic.Size = new System.Drawing.Size(185, 22);
+            this.menuGroupTopic.Text = "Group topic";
+            this.menuGroupTopic.Click += new System.EventHandler(this.toolStripMenuItem_Click);
+            // 
+            // toolStripMenuItem12
+            // 
+            this.toolStripMenuItem12.Name = "toolStripMenuItem12";
+            this.toolStripMenuItem12.Size = new System.Drawing.Size(182, 6);
             // 
             // menuGroupNew
             // 
@@ -453,28 +477,6 @@
             this.menuItem22.Index = 4;
             this.menuItem22.Text = "Exit";
             this.menuItem22.Click += new System.EventHandler(this.menuExit_Click);
-            // 
-            // menuShortcutTopic
-            // 
-            this.menuShortcutTopic.Name = "menuShortcutTopic";
-            this.menuShortcutTopic.Size = new System.Drawing.Size(185, 22);
-            this.menuShortcutTopic.Text = "Shortcut topic";
-            // 
-            // toolStripMenuItem11
-            // 
-            this.toolStripMenuItem11.Name = "toolStripMenuItem11";
-            this.toolStripMenuItem11.Size = new System.Drawing.Size(182, 6);
-            // 
-            // toolStripMenuItem12
-            // 
-            this.toolStripMenuItem12.Name = "toolStripMenuItem12";
-            this.toolStripMenuItem12.Size = new System.Drawing.Size(182, 6);
-            // 
-            // menuGroupTopic
-            // 
-            this.menuGroupTopic.Name = "menuGroupTopic";
-            this.menuGroupTopic.Size = new System.Drawing.Size(185, 22);
-            this.menuGroupTopic.Text = "Group topic";
             // 
             // Form1
             // 

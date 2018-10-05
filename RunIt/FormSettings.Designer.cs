@@ -31,6 +31,13 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormSettings));
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.groupBox12 = new System.Windows.Forms.GroupBox();
+            this.label48 = new System.Windows.Forms.Label();
+            this.txtArguments = new System.Windows.Forms.TextBox();
+            this.label47 = new System.Windows.Forms.Label();
+            this.label23 = new System.Windows.Forms.Label();
+            this.btnBrowseCustomProgram = new System.Windows.Forms.Button();
+            this.txtCustomProgram = new System.Windows.Forms.TextBox();
             this.groupBox11 = new System.Windows.Forms.GroupBox();
             this.label54 = new System.Windows.Forms.Label();
             this.radioCustomPosition = new System.Windows.Forms.RadioButton();
@@ -192,6 +199,7 @@
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
+            this.groupBox12.SuspendLayout();
             this.groupBox11.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericEdgeMargin)).BeginInit();
             this.groupBox8.SuspendLayout();
@@ -246,6 +254,7 @@
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.groupBox12);
             this.tabPage1.Controls.Add(this.groupBox11);
             this.tabPage1.Controls.Add(this.groupBox8);
             this.tabPage1.Controls.Add(this.groupBox7);
@@ -258,6 +267,81 @@
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Settings";
             this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // groupBox12
+            // 
+            this.groupBox12.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox12.Controls.Add(this.label48);
+            this.groupBox12.Controls.Add(this.txtArguments);
+            this.groupBox12.Controls.Add(this.label47);
+            this.groupBox12.Controls.Add(this.label23);
+            this.groupBox12.Controls.Add(this.btnBrowseCustomProgram);
+            this.groupBox12.Controls.Add(this.txtCustomProgram);
+            this.groupBox12.Location = new System.Drawing.Point(6, 82);
+            this.groupBox12.Name = "groupBox12";
+            this.groupBox12.Size = new System.Drawing.Size(721, 95);
+            this.groupBox12.TabIndex = 6;
+            this.groupBox12.TabStop = false;
+            this.groupBox12.Text = "Custom program to open folders";
+            // 
+            // label48
+            // 
+            this.label48.AutoSize = true;
+            this.label48.Location = new System.Drawing.Point(463, 56);
+            this.label48.Name = "label48";
+            this.label48.Size = new System.Drawing.Size(241, 13);
+            this.label48.TabIndex = 8;
+            this.label48.Text = "Variable %folder% will be replaced by actual folder";
+            // 
+            // txtArguments
+            // 
+            this.txtArguments.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtArguments.Location = new System.Drawing.Point(101, 53);
+            this.txtArguments.Name = "txtArguments";
+            this.txtArguments.Size = new System.Drawing.Size(356, 20);
+            this.txtArguments.TabIndex = 7;
+            this.txtArguments.TextChanged += new System.EventHandler(this.txtCustom_TextChanged);
+            // 
+            // label47
+            // 
+            this.label47.AutoSize = true;
+            this.label47.Location = new System.Drawing.Point(16, 56);
+            this.label47.Name = "label47";
+            this.label47.Size = new System.Drawing.Size(60, 13);
+            this.label47.TabIndex = 6;
+            this.label47.Text = "Arguments:";
+            // 
+            // label23
+            // 
+            this.label23.AutoSize = true;
+            this.label23.Location = new System.Drawing.Point(16, 30);
+            this.label23.Name = "label23";
+            this.label23.Size = new System.Drawing.Size(49, 13);
+            this.label23.TabIndex = 5;
+            this.label23.Text = "Program:";
+            // 
+            // btnBrowseCustomProgram
+            // 
+            this.btnBrowseCustomProgram.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnBrowseCustomProgram.Location = new System.Drawing.Point(629, 25);
+            this.btnBrowseCustomProgram.Name = "btnBrowseCustomProgram";
+            this.btnBrowseCustomProgram.Size = new System.Drawing.Size(75, 23);
+            this.btnBrowseCustomProgram.TabIndex = 1;
+            this.btnBrowseCustomProgram.Text = "Browse...";
+            this.btnBrowseCustomProgram.UseVisualStyleBackColor = true;
+            this.btnBrowseCustomProgram.Click += new System.EventHandler(this.btnBrowseCustomProgram_Click);
+            // 
+            // txtCustomProgram
+            // 
+            this.txtCustomProgram.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtCustomProgram.Location = new System.Drawing.Point(101, 27);
+            this.txtCustomProgram.Name = "txtCustomProgram";
+            this.txtCustomProgram.Size = new System.Drawing.Size(522, 20);
+            this.txtCustomProgram.TabIndex = 0;
+            this.txtCustomProgram.TextChanged += new System.EventHandler(this.txtCustom_TextChanged);
             // 
             // groupBox11
             // 
@@ -278,7 +362,7 @@
             this.groupBox11.Controls.Add(this.radioTopRight);
             this.groupBox11.Controls.Add(this.radioTop);
             this.groupBox11.Controls.Add(this.radioTopLeft);
-            this.groupBox11.Location = new System.Drawing.Point(376, 158);
+            this.groupBox11.Location = new System.Drawing.Point(376, 259);
             this.groupBox11.Name = "groupBox11";
             this.groupBox11.Size = new System.Drawing.Size(351, 211);
             this.groupBox11.TabIndex = 6;
@@ -484,7 +568,7 @@
             this.groupBox8.Controls.Add(this.checkTopRight);
             this.groupBox8.Controls.Add(this.checkTop);
             this.groupBox8.Controls.Add(this.checkTopLeft);
-            this.groupBox8.Location = new System.Drawing.Point(6, 158);
+            this.groupBox8.Location = new System.Drawing.Point(6, 259);
             this.groupBox8.Name = "groupBox8";
             this.groupBox8.Size = new System.Drawing.Size(364, 424);
             this.groupBox8.TabIndex = 5;
@@ -722,7 +806,7 @@
             this.groupBox7.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox7.Controls.Add(this.checkRunAutomatically);
-            this.groupBox7.Location = new System.Drawing.Point(376, 82);
+            this.groupBox7.Location = new System.Drawing.Point(376, 183);
             this.groupBox7.Name = "groupBox7";
             this.groupBox7.Size = new System.Drawing.Size(351, 70);
             this.groupBox7.TabIndex = 3;
@@ -748,7 +832,7 @@
             this.groupBox3.Controls.Add(this.checkHotkeyAlt);
             this.groupBox3.Controls.Add(this.checkHotkeyCtrl);
             this.groupBox3.Controls.Add(this.txtHotkey);
-            this.groupBox3.Location = new System.Drawing.Point(6, 82);
+            this.groupBox3.Location = new System.Drawing.Point(6, 183);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(364, 70);
             this.groupBox3.TabIndex = 2;
@@ -2145,12 +2229,15 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Settings";
             this.TopMost = true;
+            this.HelpButtonClicked += new System.ComponentModel.CancelEventHandler(this.FormSettings_HelpButtonClicked);
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormSettings_FormClosing);
             this.Load += new System.EventHandler(this.FormSettings_Load);
             this.Shown += new System.EventHandler(this.FormSettings_Shown);
             this.Move += new System.EventHandler(this.FormSettings_Move);
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
+            this.groupBox12.ResumeLayout(false);
+            this.groupBox12.PerformLayout();
             this.groupBox11.ResumeLayout(false);
             this.groupBox11.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericEdgeMargin)).EndInit();
@@ -2365,5 +2452,12 @@
         private System.Windows.Forms.RadioButton radioCustomPosition;
         private System.Windows.Forms.PictureBox pictureBox2;
         private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.GroupBox groupBox12;
+        private System.Windows.Forms.Label label23;
+        private System.Windows.Forms.Button btnBrowseCustomProgram;
+        private System.Windows.Forms.TextBox txtCustomProgram;
+        private System.Windows.Forms.Label label48;
+        private System.Windows.Forms.TextBox txtArguments;
+        private System.Windows.Forms.Label label47;
     }
 }

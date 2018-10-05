@@ -53,9 +53,13 @@ namespace RunIt
                     Control control = (Control)sender;
                     file = control.Tag.ToString();
 
+                    /*
                     ProcessStartInfo startInfo = new ProcessStartInfo();
                     startInfo.FileName = file;
                     if (System.IO.File.Exists(file)) Process.Start(startInfo);
+                    */
+
+                    StartFileOrFolder(file);
                 }
 
                 catch { }
@@ -68,12 +72,14 @@ namespace RunIt
                 if (control is Panel)
                 {
                     clickedPanel = (Panel)control;
+                    menuShortcutTopic.Tag = clickedPanel.Tag;
                     showShortcutContext((Panel)control, e.Location);
                 }
 
                 else
                 {
                     clickedPanel = (Panel)control.Parent;
+                    menuShortcutTopic.Tag = clickedPanel.Tag;
                     showShortcutContext((Panel)control.Parent, e.Location);
                 }
             }
@@ -252,6 +258,7 @@ namespace RunIt
             menuGroupTopic.Text = Path.GetFileNameWithoutExtension(clickedLabel.Text);
             menuGroupTopic.Image = GetGroupIcon();
             menuGroupTopic.Font = new Font(menuGroupTopic.Font, FontStyle.Bold);
+            menuGroupTopic.Tag = Path.Combine(setFolder, clickedLabel.Text);
             if (e.Button == MouseButtons.Right) contextGroup.Show(this, this.PointToClient(screenPoint));
         }
 
@@ -304,10 +311,10 @@ namespace RunIt
             m.Message = "Enter a new name for " + name;
             m.TextEntered = name;
 
-            double opa = this.Opacity;
-            this.Opacity = opa - .1;
+            //double opa = this.Opacity;
+            //this.Opacity = opa - .1;
             m.ShowDialog();
-            this.Opacity = opa;
+            //this.Opacity = opa;
 
             if (m.Result == DialogResult.OK)
             {
@@ -389,10 +396,10 @@ namespace RunIt
             m.Topic = "Delete shortcut";
             m.Message = "Really delete shortcut " + name + "?";
 
-            double opa = this.Opacity;
-            this.Opacity = opa - .1;
+            //double opa = this.Opacity;
+            //this.Opacity = opa - .1;
             m.ShowDialog();
-            this.Opacity = opa;
+            //this.Opacity = opa;
 
             if (m.Result == DialogResult.OK)
             {
@@ -432,10 +439,10 @@ namespace RunIt
             m.Topic = "Add new group";
             m.Message = "Enter a name for a new group";
 
-            double opa = this.Opacity;
-            this.Opacity = opa - .1;
+            //double opa = this.Opacity;
+            //this.Opacity = opa - .1;
             m.ShowDialog();
-            this.Opacity = opa;
+            //this.Opacity = opa;
 
             if (m.Result == DialogResult.OK)
             {
@@ -497,10 +504,10 @@ namespace RunIt
             m.Message = "Enter a new name for " + group;
             m.TextEntered = group;
 
-            double opa = this.Opacity;
-            this.Opacity = opa - .1;
+            //double opa = this.Opacity;
+            //this.Opacity = opa - .1;
             m.ShowDialog();
-            this.Opacity = opa;
+            //this.Opacity = opa;
 
             if (m.Result == DialogResult.OK)
             {
@@ -564,10 +571,10 @@ namespace RunIt
             m.Topic = "Delete group";
             m.Message = "Really delete group " + group + "?";
 
-            double opa = this.Opacity;
-            this.Opacity = opa - .1;
+            //double opa = this.Opacity;
+            //this.Opacity = opa - .1;
             m.ShowDialog();
-            this.Opacity = opa;
+            //this.Opacity = opa;
 
             if (m.Result == DialogResult.OK)
             {

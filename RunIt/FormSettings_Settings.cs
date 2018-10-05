@@ -20,6 +20,8 @@ namespace RunIt
 
             settings.OpenSettings();
             txtShortcutFolder.Text = settings.GetSetting("ShortcutFolder");
+            txtCustomProgram.Text = settings.GetSetting("CustomProgram");
+            txtArguments.Text = settings.GetSetting("CustomProgramArguments");
 
             txtHotkey.Text = settings.GetSetting("Hotkey");
             checkHotkeyAlt.Checked = settings.GetSetting("HotkeyAlt", "bool", "false");
@@ -130,6 +132,8 @@ namespace RunIt
             catch { }
 
             settings.SetSetting("ShortcutFolder", txtShortcutFolder.Text);
+            settings.SetSetting("CustomProgram", txtCustomProgram.Text);
+            settings.SetSetting("CustomProgramArguments", txtArguments.Text);
 
             settings.SetSetting("HotKey", txtHotkey.Text);
             settings.SetSetting("HotKeyAlt", checkHotkeyAlt.Checked.ToString());

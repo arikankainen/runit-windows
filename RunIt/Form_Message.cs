@@ -174,7 +174,7 @@ namespace RunIt
             labelTopic.ForeColor = colorTopic;
             txtText.ForeColor = labelText.ForeColor = labelOk.ForeColor = labelCancel.ForeColor = colorText;
             labelTopic.Font = fontTopic;
-            labelText.Font = labelOk.Font = labelCancel.Font = fontText;
+            labelText.Font = labelOk.Font = labelCancel.Font = txtText.Font = fontText;
 
             labelTopic.Text = topic;
             labelText.Text = message;

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
@@ -27,8 +28,11 @@ namespace RunIt
 
         private void FormSettings_Load(object sender, EventArgs e)
         {
+            txtShortcutFolder_TextChanged(null, null);
+            txtCustom_TextChanged(null, null);
+
             loadSettings();
-            labelVersion.Text = "RunIt v" + Application.ProductVersion + " © 2018 AriK";
+            labelVersion.Text = "RunIt v" + Application.ProductVersion + " © 2018 Ari Kankainen";
 
             tabControl1.SelectedIndex = (Application.OpenForms["Form1"] as Form1).SettingsPage;
         }
@@ -102,6 +106,24 @@ namespace RunIt
 
             DialogResult result = folder.ShowDialog();
             if (folder.SelectedPath != "") txtShortcutFolder.Text = folder.SelectedPath;
+        }
+
+        private void btnBrowseCustomProgram_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog dlg = new OpenFileDialog();
+
+            dlg.Filter = "Programs (*.exe, *.com)|*.exe;*.com|All files (*.*)|*.*";
+            dlg.FilterIndex = 1;
+            dlg.RestoreDirectory = true;
+            dlg.Multiselect = false;
+
+            if (dlg.ShowDialog() == DialogResult.OK)
+            {
+                if (File.Exists(dlg.FileName))
+                {
+                    txtCustomProgram.Text = dlg.FileName;
+                }
+            }
         }
 
         private void btnColorBackground_Click(object sender, EventArgs e)
@@ -735,6 +757,32 @@ namespace RunIt
         {
             if (Directory.Exists(txtShortcutFolder.Text)) txtShortcutFolder.BackColor = folderExist;
             else txtShortcutFolder.BackColor = folderNotExist;
+        }
+
+        private void txtCustom_TextChanged(object sender, EventArgs e)
+        {
+            if (txtCustomProgram.Text == "" && txtArguments.Text == "") txtCustomProgram.BackColor = txtArguments.BackColor = folderExist;
+
+            else
+            {
+                if (File.Exists(txtCustomProgram.Text)) txtCustomProgram.BackColor = folderExist;
+                else txtCustomProgram.BackColor = folderNotExist;
+
+                if (txtArguments.Text.Contains("%folder%")) txtArguments.BackColor = folderExist;
+                else txtArguments.BackColor = folderNotExist;
+            }
+        }
+
+        private void FormSettings_HelpButtonClicked(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            string helpFile = Path.Combine(appDir, "RunIt.chm");
+
+            if (File.Exists(helpFile))
+            {
+                Process.Start(helpFile);
+            }
+
+            e.Cancel = true;
         }
     }
 }

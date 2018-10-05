@@ -58,6 +58,8 @@ namespace RunIt
         private int setFadeSpeed;
 
         private string setFolder;
+        private string setCustomProgram;
+        private string setCustomProgramArguments;
         private string setHotkey;
 
         private bool setHotkeyAlt;
@@ -133,6 +135,8 @@ namespace RunIt
         {
 
             setFolder = settings.LoadSetting("ShortcutFolder");
+            setCustomProgram = settings.LoadSetting("CustomProgram");
+            setCustomProgramArguments = settings.LoadSetting("CustomProgramArguments");
 
             if (setFolder == "")
             {

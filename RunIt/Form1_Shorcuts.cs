@@ -7,6 +7,7 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using Microsoft.Win32;
 using System.Diagnostics;
+using System.Text.RegularExpressions;
 
 namespace RunIt
 {
@@ -113,6 +114,8 @@ namespace RunIt
                 //topItem.Font = setGroupFont;
                 topItem.Font = new Font(topItem.Font, FontStyle.Bold);
                 topItem.Image = exctractIconSmall(linkFolder);
+                topItem.Tag = linkFolder;
+                topItem.Click += new EventHandler(toolStripMenuItem_Click);
 
                 contextFolder.Items.Add(topItem);
 
@@ -169,7 +172,13 @@ namespace RunIt
             ToolStripMenuItem item = (ToolStripMenuItem)sender;
             string filename = item.Tag.ToString();
 
-            if (System.IO.File.Exists(filename) || Directory.Exists(filename) || isUrl(filename))
+            
+            if (System.IO.File.Exists(filename) || Directory.Exists(filename))
+            {
+                StartFileOrFolder(filename);
+            }
+
+            else if (isUrl(filename))
             {
                 Process.Start(filename);
             }
@@ -456,6 +465,47 @@ namespace RunIt
                 label.Top = panel.Bottom;
                 panel.Controls.Add(label);
             }
+        }
+
+        private void StartFileOrFolder(string link)
+        {
+            WshShell shell = new WshShell();
+            WshShortcut shortcut = (WshShortcut)shell.CreateShortcut(link);
+            string fileOrFolder = shortcut.TargetPath;
+
+            bool file = false;
+            bool folder = false;
+
+            if (Directory.Exists(fileOrFolder)) folder = true;
+            if (System.IO.File.Exists(fileOrFolder)) file = true;
+
+            if (file)
+            {
+                ProcessStartInfo startInfo = new ProcessStartInfo();
+                startInfo.FileName = fileOrFolder;
+                if (System.IO.File.Exists(fileOrFolder)) Process.Start(startInfo);
+            }
+
+            else if (folder)
+            {
+                if (setCustomProgram != null && setCustomProgram != "" && System.IO.File.Exists(setCustomProgram) && setCustomProgramArguments != null && setCustomProgramArguments.Contains("%folder%"))
+                {
+                    ProcessStartInfo startInfo = new ProcessStartInfo();
+                    startInfo.FileName = setCustomProgram;
+                    startInfo.Arguments = setCustomProgramArguments.Replace("%folder%", fileOrFolder);
+                    if (Directory.Exists(fileOrFolder)) Process.Start(startInfo);
+                }
+
+                else
+                {
+                    ProcessStartInfo startInfo = new ProcessStartInfo();
+                    startInfo.FileName = fileOrFolder;
+                    if (Directory.Exists(fileOrFolder)) Process.Start(startInfo);
+                }
+            }
+
+
+
         }
     }
 }
