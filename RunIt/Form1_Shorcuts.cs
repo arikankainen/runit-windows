@@ -482,7 +482,7 @@ namespace RunIt
             if (file)
             {
                 ProcessStartInfo startInfo = new ProcessStartInfo();
-                startInfo.FileName = fileOrFolder;
+                startInfo.FileName = link;
                 if (System.IO.File.Exists(fileOrFolder)) Process.Start(startInfo);
             }
 
