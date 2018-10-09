@@ -467,7 +467,7 @@ namespace RunIt
             }
         }
 
-        private void StartFileOrFolder(string link)
+        private void StartFileOrFolderShortcut(string link)
         {
             WshShell shell = new WshShell();
             WshShortcut shortcut = (WshShortcut)shell.CreateShortcut(link);
@@ -483,6 +483,39 @@ namespace RunIt
             {
                 ProcessStartInfo startInfo = new ProcessStartInfo();
                 startInfo.FileName = link;
+                if (System.IO.File.Exists(fileOrFolder)) Process.Start(startInfo);
+            }
+
+            else if (folder)
+            {
+                if (setCustomProgram != null && setCustomProgram != "" && System.IO.File.Exists(setCustomProgram) && setCustomProgramArguments != null && setCustomProgramArguments.Contains("%folder%"))
+                {
+                    ProcessStartInfo startInfo = new ProcessStartInfo();
+                    startInfo.FileName = setCustomProgram;
+                    startInfo.Arguments = setCustomProgramArguments.Replace("%folder%", fileOrFolder);
+                    if (Directory.Exists(fileOrFolder)) Process.Start(startInfo);
+                }
+
+                else
+                {
+                    ProcessStartInfo startInfo = new ProcessStartInfo();
+                    startInfo.FileName = fileOrFolder;
+                    if (Directory.Exists(fileOrFolder)) Process.Start(startInfo);
+                }
+            }
+        }
+        private void StartFileOrFolder(string fileOrFolder)
+        {
+            bool file = false;
+            bool folder = false;
+
+            if (Directory.Exists(fileOrFolder)) folder = true;
+            if (System.IO.File.Exists(fileOrFolder)) file = true;
+
+            if (file)
+            {
+                ProcessStartInfo startInfo = new ProcessStartInfo();
+                startInfo.FileName = fileOrFolder;
                 if (System.IO.File.Exists(fileOrFolder)) Process.Start(startInfo);
             }
 

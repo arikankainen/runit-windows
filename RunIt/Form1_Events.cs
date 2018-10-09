@@ -59,7 +59,7 @@ namespace RunIt
                     if (System.IO.File.Exists(file)) Process.Start(startInfo);
                     */
 
-                    StartFileOrFolder(file);
+                    StartFileOrFolderShortcut(file);
                 }
 
                 catch { }
