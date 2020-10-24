@@ -6,3 +6,5 @@ Artikkeli projektista löytyy:
 https://www.arik.fi/ohjelmat_runit.php
 
 <img src="/docs/runit.png">
+<img src="/docs/settings1.png">
+<img src="/docs/settings2.png">
